@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>IPTV Player</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        video {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <video id="player" controls autoplay>
+        <source src="" type="application/x-mpegURL">
+    </video>
+    <script>
+        // ইউজার এজেন্ট চেক করে VLC বা IPTV অ্যাপ কিনা
+        const isVLC = navigator.userAgent.toLowerCase().includes('vlc');
+        
+        if (!isVLC) {
+            // ব্রাউজার হলে - শুধু ফাঁকা প্লেয়ার দেখাবে
+            const video = document.getElementById('player');
+            video.style.display = 'block';
+            // কোন ভিডিও লোড করবে না
+            video.addEventListener('loadstart', (e) => {
+                e.preventDefault();
+                return false;
+            });
+        } else {
+            // VLC হলে - আসল m3u ফাইল লোড করবে
+            window.location.href = 'index.m3u';
+        }
+    </script>
+</body>
+</html>
