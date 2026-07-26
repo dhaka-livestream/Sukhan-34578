@@ -1,15 +1,3 @@
-=================================
-# Developed By: Anik saha × Sadullapur,gaibandha
-# GitHub @abusaeeidx
-# IPTV Telegram Channels: @xfireflixbd
-# Last Updated: 2026-06-06 11:38 PM (BD Time)
-# Disclaimer:
-# This tool does NOT host any content.
-# It aggregates publicly available data for informational purposes only.
-# For any issues or concerns, please contact the developer.
-#==================================
-#EXTM3U
-
 #EXTINF:-1 group-title="Sports Channels" tvg-logo="https://assets-prod.services.toffeelive.com/f_png,w_300,q_85/V__o054BObUt2AG6LL5C/posters/84590b8d-6430-4ba8-a0a5-757bf2f57c05.png", WC Match Recap
 #EXTVLCOPT:http-user-agent=Toffee (Linux;Android 14)
 #EXTHTTP:{"cookie":"Edge-Cache-Cookie=URLPrefix=aHR0cHM6Ly9ibGRjbXByb2QtY2RuLnRvZmZlZWxpdmUuY29t:Expires=1785103121:KeyName=prod_linear:Signature=qqQIB0P445cER7qOtNMIWsN8s332t1m3lhx-RAfbA126JmyXpSZG58us5i9dCGs4azAsIATH13icwDM5nQi1Bw"}
