@@ -735,11 +735,11 @@ https://alex4528.site/zee5/aastha-prime/manifest.m3u8
 
                 #========Bd ayna server=======
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/nerVeTp.jpeg",[BD] Zee Bangla HD-1
-https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Zeebanglahd-1.m3u8
+https://bdx-livestream.github.io/id34578/Zeebanglahd-1.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/nerVeTp.jpeg",[BD] Zee Bangla HD-2
 https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Zeebanglahd-2.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/nerVeTp.jpeg",[BD] Zee BanglaHD-bdx
-https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Zeebanglahd-bdx.m3u8
+https://bdx-livestream.github.io/id34578/Zeebanglahd-bdx.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/6PXiBCB.jpeg",[BD] starjalsha hd-1
 https://bdx-livestream.github.io/id34578/Starjalshahd-1.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/6PXiBCB.jpeg",[BD] starjalsha hd-2
