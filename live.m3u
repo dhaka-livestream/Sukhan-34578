@@ -743,19 +743,19 @@ https://m3u8-proxy.aniksaha113.workers.dev/zeebanglahdbdx2-id34578.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/6PXiBCB.jpeg",[BD] starjalsha hd-1
 https://bdx-livestream.github.io/id34578/Starjalshahd-1.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/6PXiBCB.jpeg",[BD] starjalsha hd-2
-https://bdx-livestream.github.io/id34578/Starjalshahd-2.m3u8
+https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Starjalshahd-2.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/6PXiBCB.jpeg",[BD] starjalsha hd-3
-https://bdx-livestream.github.io/id34578/Starjalshahd-3.m3u8
+https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Starjalshahd-3.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/6PXiBCB.jpeg",[BD] starjalsha-bdx
 https://bdx-livestream.github.io/id34578/Starjalshahd-bdx.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/NXf1rqb.jpeg",[BD] sonyaath-bdx
 https://bdx-livestream.github.io/id34578/Sonyaath-bdx.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/Ya47Y5k.jpeg",[BD] colors banglahd-1
-https://bdx-livestream.github.io/id34578/Colorsbanglahd-1.m3u8
+https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Colorsbanglahd-1.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/Ya47Y5k.jpeg",[BD] colors banglahd-2
 https://bdx-livestream.github.io/id34578/Colorsbanglahd-2.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/Ya47Y5k.jpeg",[BD] colors banglahd-3
-https://bdx-livestream.github.io/id34578/Colorsbanglahd-3.m3u8
+https://proxy.aniksaha113.workers.dev/m3u8-proxy?url=https://bdx-livestream.github.io/id34578/Colorsbanglahd-3.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/Ya47Y5k.jpeg",[BD] colors-BD-sdr
 http://live.balajibroadband.com:3500/live/756.m3u8
 #EXTINF:-1 group-title="India Bangla ♛" tvg-logo="https://i.imgur.com/Ya47Y5k.jpeg",[BD] colors-BD-sdrpbdx
