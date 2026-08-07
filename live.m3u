@@ -783,10 +783,6 @@ https://flussonic.deltainfonet.com/02_Tsports_HD/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-id="100" tvg-logo="https://i.imgur.com/Ic3ulgy.png" group-title="sports",Somoy Tv-FiFa 1
 http://103.165.93.31:8095/somoyTv/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-id="100" tvg-logo="https://i.imgur.com/Ic3ulgy.png" group-title="sports",Somoy Tv-FiFa 2
-http://114.130.57.233:8080/Somoy-TV-3Mb/tracks-v1a1/mono.m3u8?token=SkQuhAXZxgBan1
-#EXTINF:-1 tvg-id="100" tvg-logo="https://i.imgur.com/Ic3ulgy.png" group-title="sports",Somoy Tv-FiFa 3
-https://proxy2.hridoytvstream.workers.dev/link-copy-kore-lav-nai=expire363470012216/somoytvfifa.m3u8?|referer=https://hridoytv.top
-#EXTINF:-1 tvg-id="100" tvg-logo="https://i.imgur.com/Ic3ulgy.png" group-title="sports",Somoy Tv-FiFa 4
 https://live.thebosstv.com:30443/dwlive/Somoy-TV/chunks.m3u8
 #EXTINF:-1 tvg-id="100" tvg-logo="https://i.imgur.com/unhEKvf.jpeg" group-title="sports",BTV NAtional FiFa-1
 http://103.114.11.37:8081/BTV/index.m3u8?token=sdfgsdiufsildugfisdgfsdiuygf
