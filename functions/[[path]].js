@@ -8,18 +8,7 @@ export async function onRequest(context) {
     const path = url.pathname;
 
     // ---- টোকেন ভেরিফিকেশন ----
-    const token = url.searchParams.get("token") || request.headers.get("x-auth-token");
-    const isAuthorized = (token === SECRET_TOKEN);
-
-    // ওয়েবসাইটের হোমপেজ (index.html) টোকেন ছাড়া দেখান
-    if (path === "/" || path === "/index.html") {
-        return next();
-    }
-
-    // যদি টোকেন না মিলে, 401 এরর দিন
-    if (!isAuthorized) {
-        return new Response("Unauthorized: Valid token required", { status: 401 });
-    }
+    const token = 
 
     // ---- ১. মূল প্লেলিস্ট ফাইল (live.m3u) হ্যান্ডেল করা ----
     if (path === "/live.m3u") {
