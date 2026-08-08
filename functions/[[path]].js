@@ -1,32 +1,58 @@
 // functions/[[path]].js
 
-// আপনার সিক্রেট পাসওয়ার্ড/টোকেন সেট করুন (যেকোনো কিছু দিন)
-const SECRET_KEY = "mySecretPassword123";
+const SECRET_KEY = "mySecretPassword123"; // আপনার টোকেন
+
+// ফাইলের ভেতরের আসল লিংকগুলোর বেস URL (যা লুকাতে চান)
+const ORIGIN_BASE = "http://103.165.93.31:8095";
 
 export async function onRequest(context) {
     const { request, next } = context;
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // ১. যদি কেউ live.m3u চায়
-    if (path === "/live.m3u") {
-        // চেক করুন ইউজার সঠিক টোকেন দিচ্ছে কিনা (Query Parameter বা Header দিয়ে)
-        const token = url.searchParams.get("token") || request.headers.get("x-auth-token");
+    // ১. যদি কেউ /proxy পাথে রিকোয়েস্ট করে (ভিডিও স্ট্রিম চাচ্ছে)
+    if (path.startsWith("/proxy")) {
+        const targetUrl = url.searchParams.get("url");
+        if (!targetUrl) {
+            return new Response("Missing 'url' parameter", { status: 400 });
+        }
 
+        // ইউজারের টোকেন চেক করুন (ঐচ্ছিক, কিন্তু ভালো)
+        const token = url.searchParams.get("token") || request.headers.get("x-auth-token");
+        if (token !== SECRET_KEY) {
+            return new Response("Unauthorized", { status: 401 });
+        }
+
+        // আসল সার্ভার থেকে ডেটা ফেচ করুন
+        const response = await fetch(targetUrl);
+        const headers = new Headers(response.headers);
+        
+        // ক্লায়েন্টে ফরওয়ার্ড করুন
+        return new Response(response.body, {
+            status: response.status,
+            headers: headers
+        });
+    }
+
+    // ২. যদি কেউ /live.m3u চায় (প্লেলিস্ট ফাইল)
+    if (path === "/live.m3u") {
+        const token = url.searchParams.get("token") || request.headers.get("x-auth-token");
         if (token !== SECRET_KEY) {
             return new Response("Unauthorized: সঠিক টোকেন দিন", { status: 401 });
         }
 
-        // স্ট্যাটিক ফাইল সার্ভার থেকে আসল live.m3u ফাইলটি পড়ুন
+        // আসল live.m3u ফাইলটি পড়ুন
         const assetResponse = await context.env.ASSETS.fetch(request);
         const originalText = await assetResponse.text();
 
-        // (অপশনাল) লিংকগুলোর সাথে টাইমস্ট্যাম্প বা ডাইনামিক কিছু যোগ করতে পারেন
-        // যেমন: এখানে প্রতি লাইনের শেষে একটি ডামি প্যারামিটার যোগ করলাম
+        // প্রতিটি লিংককে প্রোক্সি লিংকে রূপান্তর করুন
         const modifiedText = originalText.split('\n').map(line => {
+            // যদি লাইনটি কোনো লিংক হয় (http বা https দিয়ে শুরু)
             if (line.startsWith('http://') || line.startsWith('https://')) {
-                // লিংকের সাথে একটি র‍্যান্ডম বা টাইম-ভিত্তিক টোকেন যোগ করুন
-                return line + '?auth=' + Date.now();
+                // আসল লিংকটি এনকোড করে প্রোক্সি লিংক তৈরি করুন
+                const encodedUrl = encodeURIComponent(line);
+                // নিজের প্রোক্সি পাথ তৈরি করুন (টোকেনও যোগ করুন)
+                return `https://sukhan-34578.pages.dev/proxy?url=${encodedUrl}&token=${SECRET_KEY}`;
             }
             return line;
         }).join('\n');
@@ -39,6 +65,6 @@ export async function onRequest(context) {
         });
     }
 
-    // ২. অন্য যেকোনো রিকোয়েস্ট (যেমন index.html, CSS, ইমেজ) স্বাভাবিকভাবে চলতে দিন
+    // ৩. বাকি সব (index.html, ইমেজ ইত্যাদি) স্বাভাবিকভাবে চলতে দিন
     return next();
 }
