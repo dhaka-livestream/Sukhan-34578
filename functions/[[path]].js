@@ -1,97 +1,85 @@
 // functions/[[path]].js
 
-// ইউজারকে যে টোকেন দেবেন (আপনার দেওয়া উদাহরণ: 53805723)
-const SECRET_TOKEN = "53805723";
-
-// চ্যানেলগুলোর রিয়েল লিংক এবং ফেক পাথের ম্যাপিং
-const CHANNEL_MAP = {
-    "/zeebangla/live.m3u8": "http://103.165.93.31:8095/zeeBangla/tracks-v1a1/mono.m3u8"
-    // আপনি চাইলে এখানে আরও চ্যানেল যোগ করতে পারেন, যেমন:
-    // "/sony/live.m3u8": "http://103.165.93.31:8095/sony/...",
-};
+const SECRET_TOKEN = "mySecretPassword123"; // আপনার টোকেন (যদি পরিবর্তন করে থাকেন, এখানে সেট দিন)
 
 export async function onRequest(context) {
     const { request, next } = context;
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // ১. টোকেন ভেরিফিকেশন (শুধু ম্যানিফেস্ট ও প্রোক্সির জন্য)
+    // ---- টোকেন ভেরিফিকেশন ----
     const token = url.searchParams.get("token") || request.headers.get("x-auth-token");
-    
-    // যদি টোকেন মিলেনা বা ভুল হয়
-    if (token !== SECRET_TOKEN) {
-        // শুধু ওয়েবসাইটের index.html যেন খোলা যায় (সেটা টোকেন ছাড়া দেখাবে)
-        if (path === "/" || path === "/index.html") {
-            return next();
-        }
+    const isAuthorized = (token === SECRET_TOKEN);
+
+    // ওয়েবসাইটের হোমপেজ (index.html) টোকেন ছাড়া দেখান
+    if (path === "/" || path === "/index.html") {
+        return next();
+    }
+
+    // যদি টোকেন না মিলে, 401 এরর দিন
+    if (!isAuthorized) {
         return new Response("Unauthorized: Valid token required", { status: 401 });
     }
 
-    // ২. চ্যানেলের ম্যানিফেস্ট ফাইল (live.m3u8) হ্যান্ডেল করা
-    if (CHANNEL_MAP[path]) {
-        const realUrl = CHANNEL_MAP[path];
-        
-        // আসল সার্ভার থেকে ম্যানিফেস্ট ডাউনলোড করুন
-        const manifestResponse = await fetch(realUrl, {
-            headers: { "User-Agent": request.headers.get("User-Agent") || "VLC/3.0.0" }
-        });
+    // ---- ১. মূল প্লেলিস্ট ফাইল (live.m3u) হ্যান্ডেল করা ----
+    if (path === "/live.m3u") {
+        try {
+            // আপনার গিটহাবের live.m3u ফাইলটি পড়ুন
+            const assetResponse = await context.env.ASSETS.fetch(request);
+            const originalText = await assetResponse.text();
 
-        let manifestText = await manifestResponse.text();
-        
-        // ম্যানিফেস্টের ভেতরের .ts ফাইলের লিংকগুলো বের করে প্রোক্সি লিংকে রূপান্তর করুন
-        const baseUrl = realUrl.substring(0, realUrl.lastIndexOf('/') + 1);
-        const proxyBase = url.origin; // এটি স্বয়ংক্রিয়ভাবে https://sukhan.pages.dev ধরে নেবে
-
-        const lines = manifestText.split('\n');
-        const newLines = lines.map(line => {
-            // যদি লাইনে .ts থাকে এবং সেটা কমেন্ট লাইন (#) না হয়
-            if (line.includes('.ts') && !line.startsWith('#')) {
-                let fullUrl = line.trim();
-                // যদি লিংকটি রিলেটিভ হয় (যেমন: segment_001.ts), তাহলে বেস যোগ করুন
-                if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
-                    fullUrl = baseUrl + fullUrl;
+            // ফাইলের প্রতিটি লাইন চেক করে লিংকগুলোকে প্রোক্সি লিংকে রূপান্তর করুন
+            const lines = originalText.split('\n');
+            const modifiedLines = lines.map(line => {
+                // যদি লাইনটি কোনো http/https লিংক হয়
+                if (line.startsWith('http://') || line.startsWith('https://')) {
+                    // লিংকটি এনকোড করে প্রোক্সি পাথে নিয়ে যান
+                    const encoded = encodeURIComponent(line);
+                    // এখানে https://sukhan-34578.pages.dev স্বয়ংক্রিয়ভাবে বসে যাবে
+                    return `https://${url.host}/proxy?token=${SECRET_TOKEN}&url=${encoded}`;
                 }
-                // আসল ইউআরএল এনকোড করে প্রোক্সি লিংক বানান (টোকেনও যোগ করা আছে)
-                const encoded = encodeURIComponent(fullUrl);
-                return `${proxyBase}/proxy?token=${SECRET_TOKEN}&url=${encoded}`;
-            }
-            return line;
-        });
-        const rewrittenText = newLines.join('\n');
+                return line; // অন্য লাইন (যেমন #EXTINF) অপরিবর্তিত রাখুন
+            });
 
-        // ইউজারকে পরিবর্তিত ম্যানিফেস্ট পাঠান
-        return new Response(rewrittenText, {
-            headers: {
-                'Content-Type': 'application/vnd.apple.mpegurl',
-                'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'no-cache, must-revalidate'
-            }
-        });
-    }
-
-    // ৩. ভিডিওর ছোট ছোট অংশ (**.ts ফাইল**) প্রোক্সি করা
-    if (path === "/proxy") {
-        const targetUrl = url.searchParams.get("url");
-        if (!targetUrl) {
-            return new Response("Missing 'url' parameter", { status: 400 });
+            // ইউজারকে পরিবর্তিত প্লেলিস্ট পাঠান
+            return new Response(modifiedLines.join('\n'), {
+                headers: {
+                    'Content-Type': 'audio/x-mpegurl',
+                    'Cache-Control': 'no-cache, must-revalidate'
+                }
+            });
+        } catch (error) {
+            // কোনো এরর হলে সেটা ব্রাউজারে দেখান (ডিবাগিংয়ের জন্য)
+            return new Response(`Error reading playlist: ${error.message}`, { status: 500 });
         }
-
-        // আসল সার্ভার থেকে .ts ফাইলটি স্ট্রিমিং আকারে নিন
-        const proxyResponse = await fetch(decodeURIComponent(targetUrl), {
-            headers: { "User-Agent": request.headers.get("User-Agent") || "VLC/3.0.0" }
-        });
-
-        // হেডার কপি করুন (যাতে ভিডিও সঠিকভাবে চলে)
-        const headers = new Headers(proxyResponse.headers);
-        headers.set("Access-Control-Allow-Origin", "*");
-
-        // স্ট্রিম আকারে ইউজারকে পাঠান (এতে টাইমআউট হবে না)
-        return new Response(proxyResponse.body, {
-            status: proxyResponse.status,
-            headers: headers
-        });
     }
 
-    // ৪. বাকি সব রিকোয়েস্ট (যেমন /index.html, /style.css) স্বাভাবিক চলবে
+    // ---- ২. ভিডিওর ছোট অংশ (.ts ফাইল) প্রোক্সি করা ----
+    if (path === "/proxy") {
+        try {
+            const targetUrl = url.searchParams.get("url");
+            if (!targetUrl) {
+                return new Response("Missing 'url' parameter", { status: 400 });
+            }
+
+            // আসল সার্ভার থেকে .ts ফাইলটি ডাউনলোড করুন
+            const proxyResponse = await fetch(decodeURIComponent(targetUrl), {
+                headers: { "User-Agent": request.headers.get("User-Agent") || "VLC/3.0.0" }
+            });
+
+            // ভিডিও ডেটা ক্লায়েন্টে ফরওয়ার্ড করুন
+            return new Response(proxyResponse.body, {
+                status: proxyResponse.status,
+                headers: {
+                    "Content-Type": proxyResponse.headers.get("Content-Type") || "video/mp2t",
+                    "Access-Control-Allow-Origin": "*"
+                }
+            });
+        } catch (error) {
+            return new Response(`Proxy Error: ${error.message}`, { status: 500 });
+        }
+    }
+
+    // ---- ৩. বাকি সব (CSS, JS, ইমেজ) স্বাভাবিকভাবে চলবে ----
     return next();
 }
